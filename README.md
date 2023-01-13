@@ -4,7 +4,7 @@ Hey :)
 
 This is a repository where I keep track of all my AOC submissions.
 
-- 2022
+- 2022: 🦀
   - I'm working on AOC 2022 to practice Rust.
   - Since I'm using AOC primarily to teach myself a new language, the code quality will probably not be amazing - hopefully it'll get better over time!
   - After solving each day, these resources are useful in learning how other people approached the day's puzzle:
