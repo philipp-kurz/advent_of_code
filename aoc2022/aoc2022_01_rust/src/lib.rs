@@ -55,6 +55,20 @@ fn get_max_calories(input: String) -> Result<i32, ParseIntError> {
     Ok(max_calories)
 }
 
+fn get_max_calories_v2(input: String) -> Result<i32, ParseIntError> {
+    let calories = input
+        .trim_end()
+        .split("\n\n")
+        .map(|elf_lines| {
+            elf_lines
+                .lines()
+                .map(|str_val| { str_val.parse::<i32>().unwrap() })
+                .sum()
+        }).max()
+        .unwrap();
+    Ok(calories)
+}
+
 fn get_three_max_calories(input: String) -> Result<i32, ParseIntError> {
     let mut top_three_calories = vec![0; 3];
     let mut curr_calories = 0;
@@ -75,6 +89,27 @@ fn get_three_max_calories(input: String) -> Result<i32, ParseIntError> {
     Ok(top_three_calories.iter().sum())
 }
 
+fn get_three_max_calories_v2(input: String) -> Result<i32, ParseIntError> {
+    let mut result = input
+        .trim_end()
+        .split("\n\n")
+        .map(|elf_lines| {
+            elf_lines
+                .lines()
+                .map(|str_val| { str_val.parse::<i32>().unwrap() })
+                .sum()
+        })
+        .collect::<Vec<_>>();
+    result.sort();
+    let calories = result
+        .iter()
+        .rev()
+        .take(3)
+        .sum();
+    Ok(calories)
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -85,8 +120,18 @@ mod tests {
     }
 
     #[test]
+    fn test_part_one_v2() {
+        assert_eq!(get_max_calories_v2(sample_input()).unwrap(), 24000);
+    }
+
+    #[test]
     fn test_part_two() {
         assert_eq!(get_three_max_calories(sample_input()).unwrap(), 45000);
+    }
+
+    #[test]
+    fn test_part_two_v2() {
+        assert_eq!(get_three_max_calories_v2(sample_input()).unwrap(), 45000);
     }
 
     fn sample_input() -> String { "\
