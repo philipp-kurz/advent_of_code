@@ -12,6 +12,15 @@ impl Outcome {
             Self::Lose => 0,
         }
     }
+
+    fn from_encoding(enc: char) -> Option<Self> {
+        match enc {
+            'X' => Some(Self::Lose),
+            'Y' => Some(Self::Tie),
+            'Z' => Some(Self::Win),
+            _ => None,
+        }
+    }
 }
 
 #[derive(PartialEq, Eq)]
@@ -45,7 +54,7 @@ impl Move {
             return Outcome::Tie;
         } else if (*self == Self::Rock && opponent_move == Self::Scissors) ||
                   (*self == Self::Paper && opponent_move == Self::Rock) ||
-                  (*self == Self::Scissors && opponent_move == Move::Paper) {
+                  (*self == Self::Scissors && opponent_move == Self::Paper) {
             return Outcome::Win;
         } else {
             Outcome::Lose
@@ -60,35 +69,71 @@ impl Move {
         }
     }
 
+    fn get_required_own_move(&self, outcome: &Outcome) -> Move {
+        match self {
+            Self::Rock => match outcome {
+                Outcome::Lose => Self::Scissors,
+                Outcome::Tie => Self::Rock,
+                Outcome::Win => Self::Paper,
+            },
+            Self::Paper => match outcome {
+                Outcome::Lose => Self::Rock,
+                Outcome::Tie => Self::Paper,
+                Outcome::Win => Self::Scissors,
+            }
+            Self::Scissors => match outcome {
+                Outcome::Lose => Self::Paper,
+                Outcome::Tie => Self::Scissors,
+                Outcome::Win => Self::Rock,
+            }
+        }
+    }
 }
 
-fn get_match_points(line: &str) -> Result<u32, &'static str>{
-    let enc_moves: Vec<char> = line
+fn get_encodings_from_line(line: &str) -> Result<Vec<char>, &'static str> {
+    let encodings: Vec<char> = line
         .split(" ")
         .flat_map(|sub| sub.chars())
         .collect();
-    if enc_moves.len() != 2 {
+    if encodings.len() != 2 {
         return Err("Invalid match line encountered");
     }
-    let inv_move_err = "Invalid encoded move encountered";
-    let opponent_move = Move::from_opponent(enc_moves[0]).ok_or(inv_move_err)?;
-    let own_move = Move::from_own(enc_moves[1]).ok_or(inv_move_err)?;
+    Ok(encodings)
+}
+
+const INV_MOVE_ERR: &str = "Invalid encoded move encountered";
+
+fn get_match_points_p1(line: &str) -> Result<u32, &'static str> {
+    let enc_moves = get_encodings_from_line(line)?;
+    let opponent_move = Move::from_opponent(enc_moves[0]).ok_or(INV_MOVE_ERR)?;
+    let own_move = Move::from_own(enc_moves[1]).ok_or(INV_MOVE_ERR)?;
     let outcome = own_move.defeats(opponent_move);
+    Ok(own_move.get_points() + outcome.get_points())
+}
+
+fn get_match_points_p2(line: &str) -> Result<u32, &'static str> {
+    let encodings = get_encodings_from_line(line)?;
+    let opponent_move = Move::from_opponent(encodings[0]).ok_or(INV_MOVE_ERR)?;
+    let outcome = Outcome::from_encoding(encodings[1]).ok_or(INV_MOVE_ERR)?;
+    let own_move = opponent_move.get_required_own_move(&outcome);
     Ok(own_move.get_points() + outcome.get_points())
 }
 
 pub fn process_part_one(input: &str) -> Result<String, &'static str> {
     let mut result = 0;
-    for match_points in input.trim_end().lines().map(get_match_points) {
+    for match_points in input.trim_end().lines().map(get_match_points_p1) {
         result += match_points?;
     }
     Ok(result.to_string())
 }
 
-pub fn process_part_two(_input: &str) -> String {
-    "".to_string()
+pub fn process_part_two(input: &str) -> Result<String, &'static str> {
+    let mut result = 0;
+    for match_points in input.trim_end().lines().map(get_match_points_p2) {
+        result += match_points?;
+    }
+    Ok(result.to_string())
 }
-
 
 
 #[cfg(test)]
@@ -103,5 +148,10 @@ C Z";
     #[test]
     fn test_part_one() {
         assert_eq!(process_part_one(INPUT).unwrap(), "15");
+    }
+
+    #[test]
+    fn test_part_two() {
+        assert_eq!(process_part_two(INPUT).unwrap(), "12");
     }
 }
