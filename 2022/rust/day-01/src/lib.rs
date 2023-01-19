@@ -31,14 +31,14 @@ impl Config {
 pub fn run(config: Config) -> Result<(), Box<dyn error::Error>> {
     let input = fs::read_to_string(config.input_path)?;
     let calories = match config.part {
-        Part::One => get_max_calories(input)?,
-        Part::Two => get_three_max_calories(input)?,
+        Part::One => process_part_one(&input)?,
+        Part::Two => process_part_two(&input)?,
     };
     println!("Calories: {calories}");
     Ok(())
 }
 
-fn get_max_calories(input: String) -> Result<i32, ParseIntError> {
+pub fn process_part_one(input: &str) -> Result<i32, ParseIntError> {
     let mut curr_calories = 0;
     let mut max_calories = 0;
 
@@ -55,7 +55,7 @@ fn get_max_calories(input: String) -> Result<i32, ParseIntError> {
     Ok(max_calories)
 }
 
-fn get_max_calories_v2(input: String) -> Result<i32, ParseIntError> {
+pub fn process_part_one_2(input: &str) -> Result<i32, ParseIntError> {
     let calories = input
         .trim_end()
         .split("\n\n")
@@ -69,7 +69,7 @@ fn get_max_calories_v2(input: String) -> Result<i32, ParseIntError> {
     Ok(calories)
 }
 
-fn get_three_max_calories(input: String) -> Result<i32, ParseIntError> {
+pub fn process_part_two(input: &str) -> Result<i32, ParseIntError> {
     let mut top_three_calories = vec![0; 3];
     let mut curr_calories = 0;
 
@@ -89,7 +89,7 @@ fn get_three_max_calories(input: String) -> Result<i32, ParseIntError> {
     Ok(top_three_calories.iter().sum())
 }
 
-fn get_three_max_calories_v2(input: String) -> Result<i32, ParseIntError> {
+pub fn process_part_two_2(input: &str) -> Result<i32, ParseIntError> {
     let mut result = input
         .trim_end()
         .split("\n\n")
@@ -116,22 +116,22 @@ mod tests {
 
     #[test]
     fn test_part_one() {
-        assert_eq!(get_max_calories(sample_input()).unwrap(), 24000);
+        assert_eq!(process_part_one(sample_input()).unwrap(), 24000);
     }
 
     #[test]
     fn test_part_one_v2() {
-        assert_eq!(get_max_calories_v2(sample_input()).unwrap(), 24000);
+        assert_eq!(process_part_one_2(sample_input()).unwrap(), 24000);
     }
 
     #[test]
     fn test_part_two() {
-        assert_eq!(get_three_max_calories(sample_input()).unwrap(), 45000);
+        assert_eq!(process_part_two(sample_input()).unwrap(), 45000);
     }
 
     #[test]
     fn test_part_two_v2() {
-        assert_eq!(get_three_max_calories_v2(sample_input()).unwrap(), 45000);
+        assert_eq!(process_part_two_2(sample_input()).unwrap(), 45000);
     }
 
     fn sample_input() -> String { "\

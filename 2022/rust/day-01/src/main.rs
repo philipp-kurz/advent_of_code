@@ -1,6 +1,5 @@
-use aoc2022_01_rust as aoc;
 use std::env;
-use aoc::Config;
+use day_01::{Config, run};
 use std::process;
 
 /*
@@ -16,7 +15,7 @@ fn main() {
         process::exit(1);
     });
 
-    if let Err(e) = aoc::run(config) {
+    if let Err(e) = run(config) {
         eprintln!("Application error: {e}");
         process::exit(1);
     }
