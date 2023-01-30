@@ -35,8 +35,6 @@ Find the item type that appears in both compartments of each rucksack. What is t
 
 ## Part Two
 
---- Part Two ---
-
 As you finish identifying the misplaced items, the Elves come to you with another issue.
 
 For safety, the Elves are divided into groups of three. Every Elf carries a badge that identifies their group. For efficiency, within each group of three Elves, the badge is the only item type carried by all three Elves. That is, if a group's badge is item type B, then all three Elves will have item type B somewhere in their rucksack, and at most two of the Elves will be carrying any other item type.
