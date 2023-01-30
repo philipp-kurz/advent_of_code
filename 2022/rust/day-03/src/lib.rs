@@ -1,16 +1,24 @@
 pub fn process_part_one(input: &str) -> Result<String, &'static str> {
-    let result = 0;
-    let mut has_item = vec![false; 52];
+    let mut result = 0;
+    let mut has_item = vec![false; 53];
     for line in input.lines() {
         for v in &mut has_item {
             *v = false;
         }
         let second_half_start = line.len() / 2;
-        for char in line.chars() {
-
+        for (i, char) in line.chars().enumerate() {
+            let prio = get_priority(char)?;
+            let found = &mut has_item[prio as usize];
+            if i < second_half_start {
+                *found = true;
+            }
+            else if i >= second_half_start && *found {
+                result += prio;
+                break;
+            }
         }
     }
-    Ok(input.to_string())
+    Ok(result.to_string())
 }
 
 pub fn process_part_two(input: &str) -> Result<String, &'static str> {
@@ -18,12 +26,12 @@ pub fn process_part_two(input: &str) -> Result<String, &'static str> {
 }
 
 fn get_priority(ch: char) -> Result<u32, &'static str> {
-    static A_ASCII: u32 = 'a'.to_digit(10)
-        .expect("Constant letter will always be converted successfully");
-    match ch.to_digit(10) {
-        Some(val) => Ok(val - A_ASCII + 1),
-        None => Err("failed to convert character")
+    if !ch.is_ascii_alphabetic() {
+        return Err("invalid character encountered");
     }
+    let base = if ch.is_uppercase() { 'A' as u32 } else { 'a' as u32 };
+    let offset = if ch.is_uppercase() { 27 } else { 1 };
+    Ok(ch as u32 - base + offset)
 }
 
 #[cfg(test)]
