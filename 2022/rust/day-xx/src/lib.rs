@@ -18,8 +18,9 @@ mod tests {
         assert_eq!(process_part_one(INPUT).unwrap(), "<solution>");
     }
 
-    // #[test]
-    // fn test_part_two() {
-    //     assert_eq!(process_part_two(INPUT).unwrap(), "<solution>");
-    // }
+    #[test]
+    #[ignore]
+    fn test_part_two() {
+        assert_eq!(process_part_two(INPUT).unwrap(), "<solution>");
+    }
 }
