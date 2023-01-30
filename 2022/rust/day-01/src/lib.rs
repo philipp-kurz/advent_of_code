@@ -134,7 +134,7 @@ mod tests {
         assert_eq!(process_part_two_2(sample_input()).unwrap(), 45000);
     }
 
-    fn sample_input() -> String { "\
+    fn sample_input() -> &'static str { "\
 1000
 2000
 3000
@@ -148,7 +148,7 @@ mod tests {
 8000
 9000
 
-10000".to_string()
+10000"
     }
 
 }
