@@ -1,5 +1,21 @@
 pub fn process_part_one(input: &str) -> Result<String, &'static str> {
-    Ok(input.to_string())
+    let result = input
+        .lines()
+        .map(|line| fully_contained(line))
+        .map(|res| {res as u32})
+        .sum::<u32>();
+    Ok(result.to_string())
+}
+
+fn fully_contained(range: &str) -> bool {
+    let bounds = range
+        .split(&[',', '-'])
+        .map(|bound| {
+            bound.parse::<u32>().unwrap()
+        })
+        .collect::<Vec<_>>();
+    let [start_1, end_1, start_2, end_2] = <[_; 4]>::try_from(&bounds[0..4]).unwrap();
+    (start_1 >= start_2 && end_1 <= end_2) || (start_2 >= start_1 && end_2 <= end_1)
 }
 
 pub fn process_part_two(input: &str) -> Result<String, &'static str> {
