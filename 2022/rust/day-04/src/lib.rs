@@ -1,14 +1,5 @@
-pub fn process_part_one(input: &str) -> Result<String, &'static str> {
-    let result = input
-        .lines()
-        .map(|line| fully_contained(line))
-        .map(|res| {res as u32})
-        .sum::<u32>();
-    Ok(result.to_string())
-}
-
-fn fully_contained(range: &str) -> bool {
-    let bounds = range
+fn fully_contained(line: &str) -> bool {
+    let bounds = line
         .split(&[',', '-'])
         .map(|bound| {
             bound.parse::<u32>().unwrap()
@@ -18,8 +9,41 @@ fn fully_contained(range: &str) -> bool {
     (start_1 >= start_2 && end_1 <= end_2) || (start_2 >= start_1 && end_2 <= end_1)
 }
 
+fn between(value: u32, start: u32, end: u32) -> bool {
+    value >= start && value <= end
+}
+
+fn does_overlap(line: &str) -> bool {
+    let bounds = line
+        .split(&[',', '-'])
+        .map(|bound| {
+            bound.parse::<u32>().unwrap()
+        })
+        .collect::<Vec<_>>();
+    let [start_1, end_1, start_2, end_2] = <[_; 4]>::try_from(&bounds[0..4]).unwrap();
+
+    between(start_1, start_2, end_2) ||
+    between(end_1, start_2, end_2) ||
+    between(start_2, start_1, end_1) ||
+    between(end_2, start_1, end_1)
+}
+
+pub fn process_part_one(input: &str) -> Result<String, &'static str> {
+    let result = input
+        .lines()
+        .map(|line| fully_contained(line))
+        .map(|res| {res as u32})
+        .sum::<u32>();
+    Ok(result.to_string())
+}
+
 pub fn process_part_two(input: &str) -> Result<String, &'static str> {
-    Ok(input.to_string())
+    let result = input
+        .lines()
+        .map(|line| does_overlap(line))
+        .map(|res| {res as u32})
+        .sum::<u32>();
+    Ok(result.to_string())
 }
 
 #[cfg(test)]
@@ -40,8 +64,7 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn test_part_two() {
-        assert_eq!(process_part_two(INPUT).unwrap(), "<solution>");
+        assert_eq!(process_part_two(INPUT).unwrap(), "4");
     }
 }
